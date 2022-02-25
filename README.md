@@ -7,6 +7,9 @@
 ### 打包目录排除指定后缀文件
 `tar -zcvf program.tar.gz --exclude='*.jar'  --exclude='*.log' --exclude='*jar*' program/`
 
+### 替换目录内含有某段字符串的文件内容（192.168.6.38为原始内容39为新内容）
+ find -type f -name "*" |xargs sed -i 's/192.168.6.38/192.168.6.39/g' `grep "192.168.6.38" -rl ./`
+
 ### 设置mysql允许某个主机访问
 
 ```
