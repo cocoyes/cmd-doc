@@ -95,3 +95,18 @@ docker run -p 37017:27017 -v /wwwroot/befinx/data/mongodb:/data/db --name docker
 ```
 mongodump --host 172.26.74.228 --port 27017 -u wallet -p wallet -d wallet -o /wwwroot/mongodbback
 ```
+
+### docker安装nacos
+```
+docker run  --name nacos -d -p 8848:8848 -p 9848:9848 -p 9849:9849 -v /nacos/logs:/nacos/logs --privileged=true --restart=always -e MODE=standalone -e JVM_XMS=256m -e JVM_XMX=256m  -e JVM_XMN=50m -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=127.0.0.1 -e MYSQL_SERVICE_PORT=4306 -e MYSQL_SERVICE_USER=root -e MYSQL_SERVICE_PASSWORD=123456  -e MYSQL_SERVICE_DB_NAME=ry-config  nacos/nacos-server
+```
+
+### docker安装sentinel
+```
+docker run --name sentinel -d -p 8858:8858 bladex/sentinel-dashboard
+```
+
+### docker安装mariadb
+```
+docker run --name mariadb -p 4306:3306 -e MYSQL_ROOT_PASSWORD=liyong  -v  /home/data/mariadb:/var/lib/mysql -d mariadb
+```
