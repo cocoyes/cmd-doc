@@ -98,15 +98,33 @@ mongodump --host 172.26.74.228 --port 27017 -u wallet -p wallet -d wallet -o /ww
 
 ### docker安装nacos
 ```
-docker run  --name nacos -d -p 8848:8848 -p 9848:9848 -p 9849:9849 -v /nacos/logs:/nacos/logs --privileged=true --restart=always -e MODE=standalone -e JVM_XMS=256m -e JVM_XMX=256m  -e JVM_XMN=50m -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=127.0.0.1 -e MYSQL_SERVICE_PORT=4306 -e MYSQL_SERVICE_USER=root -e MYSQL_SERVICE_PASSWORD=123456  -e MYSQL_SERVICE_DB_NAME=ry-config  nacos/nacos-server
+docker run  --name nacos -d -p 8848:8848 -p 9848:9848 -p 9849:9849 -v /nacos/logs:/nacos/logs --privileged=true --restart=always -e MODE=standalone -e JVM_XMS=256m -e JVM_XMX=256m  -e JVM_XMN=50m -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=192.168.44.138 -e MYSQL_SERVICE_PORT=4306 -e MYSQL_SERVICE_USER=root -e MYSQL_SERVICE_PASSWORD=123456  -e MYSQL_SERVICE_DB_NAME=nacos-config  nacos/nacos-server
 ```
 
 ### docker安装sentinel
 ```
-docker run --name sentinel -d -p 8858:8858 bladex/sentinel-dashboard
+docker run --name sentinel -d -p 8858:8858 -p 8719:8719 bladex/sentinel-dashboard
 ```
 
 ### docker安装mariadb
 ```
 docker run --name mariadb -p 4306:3306 -e MYSQL_ROOT_PASSWORD=liyong  -v  /home/data/mariadb:/var/lib/mysql -d mariadb
 ```
+
+### windows主机和wsl子系统（ubuntu）相互网络服务访问
+#### 主机能通过127.0.0.1访问子系统，但是子系统无法被局域网其他主机访问，因此需要开通端口
+1.关闭主机和子系统防火墙 然后powershell运行命令
+```
+New-NetFirewallRule -DisplayName "WSL" -Direction Inbound -InterfaceAlias "vEthernet (WSL)" -Action Allow
+```
+2.在子系统内获取IP 
+```
+ip addr | grep eth0
+显示inet 192.168.44.138/20 brd 192.168.47.255 scope global eth0
+取192.168.44.138前面部分的IP
+```
+3.在主机控制台设置端口
+```
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=8848 connectaddress=192.168.44.138 connectport=8848
+```
+这样在子系统内运行的docker或者其他服务就能被局域网其他主机访问了
