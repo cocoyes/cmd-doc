@@ -126,5 +126,21 @@ ip addr | grep eth0
 3.在主机控制台设置端口
 ```
 netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=8848 connectaddress=192.168.44.138 connectport=8848
+
+删除
+netsh interface portproxy del v4tov4 listenport=8848 listenaddress=127.0.0.1
 ```
 这样在子系统内运行的docker或者其他服务就能被局域网其他主机访问了
+
+### 新虚拟机固定IP后，yum无法访问任何镜像源
+```
+Could not resolve host: mirrors.aliyun.com; 未知的错误
+出现这个错误的原因是因为没有解析dns
+$ vi /etc/sysconfig/network-scripts/ifcfg-enp0s3
+DNS1=8.8.8.8
+DNS2=8.8.4.4
+$ service network restart
+$ service NetworkManager stop  #这一步尤为重要，猜测可能是缓存问题，dns没有进去
+$ service network restart
+$ yum update -y
+```
